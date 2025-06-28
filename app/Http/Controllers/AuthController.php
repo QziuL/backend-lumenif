@@ -13,14 +13,14 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $roleAluno = Role::where('nome', 'ALUNO')->first();
+        $roleAluno = Role::where('name', 'ALUNO')->first();
 
         if(!$roleAluno)
             return response()->json(['error' => 'Internal server error'], 500);
 
         try{
             $validatedData = $request->validate([
-                'nome' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|confirmed',
             ]);
@@ -30,7 +30,7 @@ class AuthController extends Controller
 
         $user = User::create([
             'public_id' => uuid_create(),
-            'nome' => $validatedData['nome'],
+            'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ]);
@@ -45,7 +45,7 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'user' => [
                 'public_id' => $user->public_id,
-                'nome' => $user->nome,
+                'name' => $user->name,
                 'email' => $user->email,
             ]
         ], 201);
@@ -65,8 +65,8 @@ class AuthController extends Controller
         // Verifica credenciais,
         // Se as credenciais baterem, realiza autenticação na sessão,
         // Se não, retorna 401
-        if(!Auth::attempt($request->only(['email'], ['password'])))
-            return response()->json(['error' => 'Invalid credentials!'], 401);
+//        if(!Auth::attempt($request->only(['email'], ['password'])))
+//            return response()->json(['error' => 'Invalid credentials!'], 401);
 
         $user = User::where('email', $request['email'])->firstOrFail();
 
@@ -82,5 +82,11 @@ class AuthController extends Controller
                 'email' => $user->email,
             ],
         ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::user()->tokens()->delete();
+        return response()->json(['message' => 'Logout successful!'], 200);
     }
 }
