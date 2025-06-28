@@ -53,6 +53,13 @@ class User extends Authenticatable
         ];
     }
 
+    public function hasAnyRole(array $roles): bool
+    {
+        // O metodo 'whereIn' verifica se o nome do papel do usuário está na lista de papéis permitidos.
+        // O 'exists' retorna true se encontrar pelo menos um.
+        return $this->roles()->whereIn('name', $roles)->exists();
+    }
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class,
