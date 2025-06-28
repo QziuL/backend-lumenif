@@ -3,22 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function getUser(string $id)
+    public function index()
     {
-        try{
-            $user = User::where('public_id', $id)->firstOrFail();
+        $users = User::with('roles')->orderBy('created_at', 'desc')->paginate(15);
+        return response()->json($users, 200);
+    }
 
-            return response()->json([
-                "public_id" => $user->public_id,
-                "name" => $user->name,
-                "email" => $user->email
-            ], 200);
-        }catch (Exception $error){
-            return response()->json(["error" => "User not found"], 401);
-        }
+    public function show(string $id): JsonResponse
+    {
+        $user = $user = User::with('roles')->where('public_id', $id)->firstOrFail();
+        return ($user)
+            ?  response()->json($user, 200)
+            :  response()->json(["error" => "User not found."], 404);
     }
 }
