@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cursos', function (Blueprint $table) {
+        Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('titulo');
-            $table->string('descricao');
+            $table->string('title');
+            $table->string('description');
             $table->string('status');
             $table->timestamps();
             $table->softDeletes();
