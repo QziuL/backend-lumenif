@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(Request $request): \Illuminate\Http\JsonResponse
     {
         $roleAluno = Role::where('name', 'ALUNO')->first();
 
@@ -40,18 +40,18 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'User created successfully!',
             'token' => $token,
             'token_type' => 'Bearer',
             'user' => [
                 'public_id' => $user->public_id,
                 'name' => $user->name,
                 'email' => $user->email,
-            ]
+            ],
+            'roles' => $user->roles
         ], 201);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): \Illuminate\Http\JsonResponse
     {
         try{
             $request->validate([
@@ -73,20 +73,27 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Login successful!',
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => [
                 'public_id' => $user->public_id,
                 'name' => $user->name,
                 'email' => $user->email,
-            ],
+                'roles' =>  $user->roles->map(function($role){
+                    return [
+                        'id' => $role->id,
+                        'name' => $role->name,
+                    ];
+                })->values(),
+            ]
         ], 200);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): \Illuminate\Http\JsonResponse
     {
-        Auth::user()->tokens()->delete();
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return response()->json(['message' => 'Logout successful!'], 200);
     }
 }
