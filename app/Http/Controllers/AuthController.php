@@ -91,9 +91,11 @@ class AuthController extends Controller
 
     public function logout(Request $request): \Illuminate\Http\JsonResponse
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+//        $request->user()->tokens()->delete();
+//        $request->session()->invalidate();
+//        $request->session()->regenerateToken();
+        $request->user()->currentAccessToken()->delete();
+//        Auth::logout();
         return response()->json(['message' => 'Logout successful!'], 200);
     }
 }
