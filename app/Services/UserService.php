@@ -25,7 +25,7 @@ class UserService
         return User::with('roles')->where('public_id', $id)->firstOrFail();
     }
 
-    public function createUser(UserDto $userDto)
+    public function create(UserDto $userDto)
     {
         return User::create([
             'public_id' => uuid_create(),
@@ -35,7 +35,7 @@ class UserService
         ]);
     }
 
-    public function updateUser(UpdateUserDto $userDto, string $public_id)
+    public function update(UpdateUserDto $userDto, string $public_id)
     {
         $user = User::where('public_id', $public_id)->first();
 
@@ -55,7 +55,7 @@ class UserService
         return $user;
     }
 
-    public function deleteUser(string $public_id)
+    public function delete(string $public_id)
     {
         $user = User::where('public_id', $public_id)->first();
         $user->delete();

@@ -47,7 +47,7 @@ class UserController extends Controller
         }
 
         try{
-            $user = $this->userService->createUser(UserDto::createDto($request));
+            $user = $this->userService->create(UserDto::createDto($request));
             $role = Role::where('id', $validated['role_id'])->first();
             $user->roles()->attach($role);
 
@@ -67,7 +67,7 @@ class UserController extends Controller
 
         try{
             return UpdateUserDto::updateResponse(
-                $this->userService->updateUser(
+                $this->userService->update(
                     UpdateUserDto::createDto($request),
                     $id
                 )
@@ -80,7 +80,7 @@ class UserController extends Controller
     public function destroy(string $id): JsonResponse
     {
         try{
-            return response()->json($this->userService->deleteUser($id), 200);
+            return response()->json($this->userService->delete($id), 200);
         }catch (Exception $e){
             return response()->json(["error" => "Erro interno ao deletar dados."], 500);
         }
