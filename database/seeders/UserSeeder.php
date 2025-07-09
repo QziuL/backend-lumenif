@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
         ]);
         $creatorUser->roles()->attach($creatorRole);
 
-        // 4. Criar 10 usuários Alunos com dados fakes
+        // 4. Criar 1 usuário Aluno com dados fakes
         User::factory(10)->create()->each(function ($user) use ($alunoRole) {
             $user->roles()->attach($alunoRole);
         });
