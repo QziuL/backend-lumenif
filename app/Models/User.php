@@ -62,10 +62,20 @@ class User extends Authenticatable
 
     public function roles(): BelongsToMany
     {
+        // Definindo relacionamento com tabela pivot
         return $this->belongsToMany(Role::class,
             'users_roles',
             'user_id',
             'role_id'
         )->withTimestamps();
+    }
+
+    public function courses(): HasMany {
+        return $this->hasMany(Course::class, 'creator_id');
+    }
+
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(Registration::class);
     }
 }

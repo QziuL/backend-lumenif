@@ -19,11 +19,11 @@ class RoleSeeder extends Seeder
                 'created_at' => now(),
             ],
             [
-                'name' => 'ALUNO',
+                'name' => 'STUDENT',
                 'created_at' => now(),
             ],
             [
-                'name' => 'CRIADOR',
+                'name' => 'CREATOR',
                 'created_at' => now(),
             ],
         ]);
