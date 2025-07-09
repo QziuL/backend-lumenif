@@ -2,19 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Enums\CursoStatusEnum;
+use App\Enums\CourseStatusEnum;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class CursoSeeder extends Seeder
+class CourseSeeder extends Seeder
 {
     public function run(): void
     {
         $user = User::with('roles')->whereHas('roles', function ($query) {
-           $query->where('name', 'CRIADOR');
+           $query->where('name', 'CREATOR');
         })->first();
 
         DB::table('courses')->insert([
@@ -23,7 +23,7 @@ class CursoSeeder extends Seeder
                 'creator_id' => $user->id,
                 'title' => 'API RESTful com Laravel 12',
                 'description' => 'Aprenda algo para ganhar dinheiro.',
-                'status' => CursoStatusEnum::Approved,
+                'status' => CourseStatusEnum::Approved,
                 'created_at' => now(),
             ],
             [
@@ -31,7 +31,7 @@ class CursoSeeder extends Seeder
                 'creator_id' => $user->id,
                 'title' => 'Introdução ao Angular com PrimeNG',
                 'description' => 'Seja o melhor desenvolvedor frontend do mundo.',
-                'status' => CursoStatusEnum::Pending,
+                'status' => CourseStatusEnum::Pending,
                 'created_at' => now(),
             ]
         ]);

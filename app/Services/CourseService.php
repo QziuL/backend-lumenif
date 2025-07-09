@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\CourseDto;
-use App\Enums\CursoStatusEnum;
+use App\Enums\CourseStatusEnum;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use App\Models\User;
@@ -32,7 +32,7 @@ class CourseService
             'public_id' => uuid_create(),
             'title' => $courseDto->title,
             'description' => $courseDto->description,
-            'status' => CursoStatusEnum::Pending,
+            'status' => CourseStatusEnum::Pending,
             'creator_id' => $authUserId,
         ]);
     }
@@ -50,7 +50,7 @@ class CourseService
             $course->update([
                 'title' => $courseDto->title,
                 'description' => $courseDto->description,
-                'status' => CursoStatusEnum::from($courseDto->status),
+                'status' => CourseStatusEnum::from($courseDto->status),
             ]);
             return true;
         }

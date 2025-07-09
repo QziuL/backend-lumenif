@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CursoStatusEnum: string
+enum CourseStatusEnum: string
 {
     case Approved = 'approved';
     case Rejected = 'rejected';

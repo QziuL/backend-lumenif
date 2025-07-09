@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\CursoStatusEnum;
+use App\Enums\CourseStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +16,7 @@ class Course extends Model
     protected $table = "courses";
 
     protected $casts = [
-        'status' => CursoStatusEnum::class,
+        'status' => CourseStatusEnum::class,
     ];
 
     protected $fillable = [
@@ -34,5 +34,9 @@ class Course extends Model
 
     public function modules(): HasMany {
         return $this->hasMany(Module::class);
+    }
+
+    public function registrations(): HasMany {
+        return $this->hasMany(Registration::class);
     }
 }

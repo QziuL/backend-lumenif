@@ -3,7 +3,10 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\DashboardStatsController;
+use App\Http\Controllers\RegistrationCourseController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StudentClasseController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ModuleController;
 use Illuminate\Support\Facades\Route;
@@ -28,9 +31,8 @@ Route::middleware(['auth:sanctum', 'role:ADMIN'])->prefix('admin')->group(functi
     });
 });
 
-
 // CREATOR
-Route::middleware(['auth:sanctum', 'role:CRIADOR'])->prefix('creator')->group(function () {
+Route::middleware(['auth:sanctum', 'role:CREATOR'])->prefix('creator')->group(function () {
     // Rotas para Cursos
     Route::prefix('courses')->group(function () {
        Route::get('', [CourseController::class, 'index']);
@@ -54,11 +56,29 @@ Route::middleware(['auth:sanctum', 'role:CRIADOR'])->prefix('creator')->group(fu
            });
        });
    });
+
+    Route::get('/stats/course-status', [DashboardStatsController::class, 'courseStatusStats']);
+    Route::get('/stats/top-courses', [DashboardStatsController::class, 'topCoursesByStudents']);
+
 });
 
-// Rota LOGOUT
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
+// Rotas com Autenticação necessária
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Rota LOGOUT
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
+
+    // Rotas ALUNO
+    Route::middleware('role:STUDENT')->group(function () {
+        // Inscrever-se num Curso
+        Route::post('courses/{course:public_id}/registration', [RegistrationCourseController::class, 'store']);
+
+        Route::prefix('student')->group(function () {
+            Route::get('/registrations', [RegistrationCourseController::class, 'index']);
+            Route::post('/classes/{classe}/completed', [StudentClasseController::class, 'completed']);
+        });
+    });
 });
 
 Route::post('/register', [AuthController::class, 'register']);

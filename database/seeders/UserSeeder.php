@@ -16,8 +16,8 @@ class UserSeeder extends Seeder
     {
         // 1. Buscar os papéis no banco de dados
         $adminRole = Role::where('name', 'ADMIN')->first();
-        $creatorRole = Role::where('name', 'CRIADOR')->first();
-        $alunoRole = Role::where('name', 'ALUNO')->first();
+        $creatorRole = Role::where('name', 'CREATOR')->first();
+        $studentRole = Role::where('name', 'STUDENT')->first();
 
         // 2. Criar um usuário Administrador
         $adminUser = User::factory()->create([
@@ -37,9 +37,17 @@ class UserSeeder extends Seeder
         ]);
         $creatorUser->roles()->attach($creatorRole);
 
-        // 4. Criar 1 usuário Aluno com dados fakes
-        User::factory(10)->create()->each(function ($user) use ($alunoRole) {
-            $user->roles()->attach($alunoRole);
-        });
+        $studentUser = User::factory()->create([
+            'public_id' => uuid_create(),
+            'name' => 'Aluno Exemplo',
+            'email' => 'aluno@lumenif.com',
+            'password' => Hash::make('aluno123'),
+        ]);
+        $studentUser->roles()->attach($studentRole);
+
+        // 4. Criar 10 usuário Aluno com dados fakes
+//        User::factory(10)->create()->each(function ($user) use ($alunoRole) {
+//            $user->roles()->attach($alunoRole);
+//        });
     }
 }
