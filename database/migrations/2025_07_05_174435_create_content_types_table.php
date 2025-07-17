@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('content_types', function (Blueprint $table) {
             $table->id();
-//            $table->uuid('public_id')->unique();
             $table->string('name');
             $table->softDeletes();
             $table->timestamps();
