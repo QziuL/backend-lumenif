@@ -73,7 +73,7 @@ class ModuleController extends Controller
             'course_id' => 'required|exists:courses,public_id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'order' => 'required|integer|unique:modules,order',
+            'order' => 'required|integer',
         ]);
     }
 

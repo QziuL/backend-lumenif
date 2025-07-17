@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     public function register(Request $request): \Illuminate\Http\JsonResponse
     {
-        $roleAluno = Role::where('name', 'ALUNO')->first();
+        $roleAluno = Role::where('name', 'STUDENT')->first();
 
         if(!$roleAluno)
             return response()->json(['error' => 'Internal server error'], 500);

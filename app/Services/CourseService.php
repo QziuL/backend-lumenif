@@ -6,18 +6,12 @@ use App\DTOs\CourseDto;
 use App\Enums\CourseStatusEnum;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
+use App\Models\Registration;
 use App\Models\User;
 use Exception;
 
 class CourseService
 {
-    private UserService $userService;
-
-    public function __construct()
-    {
-        $this->userService = new UserService();
-    }
-
     public function getAll() {
         return CourseResource::collection(
             Course::with('modules')
@@ -37,20 +31,54 @@ class CourseService
         ]);
     }
 
-    public function getOne(string $public_id)
+    public function getOneForCreateOrUpdate(string $public_id)
     {
-        return Course::where('public_id', $public_id)->first();
+        return Course::where('public_id', $public_id)->firstOrFail();
+    }
+
+    public function getOneForShow(string $public_id)
+    {
+        $course = Course::with('modules')->where('public_id',$public_id)->firstOrFail();
+        $user = User::where('id', $course->creator_id)->first();
+        $registrations = Registration::where('course_id', $course->id)->get();
+        return [
+            'public_id' => $course->public_id,
+            'creator_id' => $user->public_id,
+            'title' => $course->title,
+            'description' => $course->description,
+            'status' => $course->status->label(),  // chamando metodo 'label()' do enum para apresentação dos dados
+            'modules' => $course->modules->map(function ($module) {
+                return [
+                    'title' => $module->title,
+                    'public_id' => $module->public_id,
+                    'description' => $module->description,
+                    'order' => $module->order,
+                    'lessons' => $module->classes->map(function ($class) {
+                        return [
+                            'id' => $class->public_id,
+                            'title' => $class->title,
+                        ];
+                    })->values()
+                ];
+            })->values(),
+            'students' => $registrations->map(function ($registration) {
+                return [
+                    'name' => $registration->user->name,
+                    'email' => $registration->user->email,
+                    'enrolled_at' =>  $registration->created_at->format('d/m/Y'),
+                ];
+            })->values()
+        ];
     }
 
     public function update(CourseDto $courseDto, string $id, int $authUserId): bool
     {
-        $course = $this->getOne($id);
+        $course = $this->getOneForCreateOrUpdate($id);
         if($course &&  $course->creator_id === $authUserId)
         {
             $course->update([
                 'title' => $courseDto->title,
                 'description' => $courseDto->description,
-                'status' => CourseStatusEnum::from($courseDto->status),
             ]);
             return true;
         }
@@ -62,7 +90,7 @@ class CourseService
      */
     public function delete(string $public_id, int $authUserId): void
     {
-        $course = $this->getOne($public_id);
+        $course = $this->getOneForCreateOrUpdate($public_id);
         if(!$course || $course->creator_id !== $authUserId)
             throw new Exception("Acesso negado.");
         $course->delete();

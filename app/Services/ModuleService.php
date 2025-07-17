@@ -36,8 +36,8 @@ class ModuleService
      */
     public function create(ModuleDto $moduleDto, int $authUserId)
     {
-        $course = $this->courseService->getOne($moduleDto->course_id);
-        if(!$course ||  $course->creator_id !== $authUserId)
+        $course = $this->courseService->getOneForCreateOrUpdate($moduleDto->course_id);
+        if(!$course ||  $course->creator_id  !== $authUserId)
             throw new Exception("Acesso negado.");
         return Module::create([
             'public_id' => uuid_create(),

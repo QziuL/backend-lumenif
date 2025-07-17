@@ -22,6 +22,15 @@ class CourseController extends Controller
         return $this->courseService->getAll();
     }
 
+    public function show(string $publicId)
+    {
+        try {
+            return response()->json($this->courseService->getOneForShow($publicId));
+        }catch (Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
+    }
+
     public function store(Request $request)
     {
         $this->validateRequest($request, "CREATE");
@@ -76,7 +85,6 @@ class CourseController extends Controller
             return $request->validate([
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
-                'status'  => 'required|string|max:255',
             ]);
         }catch (Exception $e){
             return response()->json(["Erro na requisição, verifique os dados." => $e->getMessage()], 500);

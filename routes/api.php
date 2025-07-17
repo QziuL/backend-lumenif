@@ -1,14 +1,18 @@
 <?php
 
+use App\Http\Controllers\AdminCourseController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClasseController;
+use App\Http\Controllers\ContentTypeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardStatsController;
+use App\Http\Controllers\PublicCourseController;
 use App\Http\Controllers\RegistrationCourseController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentClasseController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ModuleController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +29,13 @@ Route::middleware(['auth:sanctum', 'role:ADMIN'])->prefix('admin')->group(functi
         Route::put('/{id}', [UserController::class, 'update']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
     });
+
+    Route::get('/courses-approved', [AdminCourseController::class, 'getAllApproved']);
+    Route::get('/courses-pending', [AdminCourseController::class, 'getAllPending']);
+    Route::get('/courses', [AdminCourseController::class, 'index']);
+    Route::put('/courses/{course:public_id}/approve', [AdminCourseController::class, 'approve']);
+    Route::put('/courses/{course:public_id}/reject', [AdminCourseController::class, 'reject']);
+
     // Rota para gerenciamento de roles
     Route::prefix('roles')->group(function () {
         Route::get('', [RoleController::class, 'index']);
@@ -36,6 +47,7 @@ Route::middleware(['auth:sanctum', 'role:CREATOR'])->prefix('creator')->group(fu
     // Rotas para Cursos
     Route::prefix('courses')->group(function () {
        Route::get('', [CourseController::class, 'index']);
+       Route::get('/{id}', [CourseController::class, 'show']);
        Route::post('', [CourseController::class, 'store']);
        Route::put('/{id}', [CourseController::class, 'update']);
        Route::delete('/{id}', [CourseController::class, 'destroy']);
@@ -57,6 +69,9 @@ Route::middleware(['auth:sanctum', 'role:CREATOR'])->prefix('creator')->group(fu
        });
    });
 
+    Route::get('/content-types', [ContentTypeController::class, 'index']);
+
+    Route::get('/stats/kpis', [DashboardStatsController::class, 'mainDashboardStats']);
     Route::get('/stats/course-status', [DashboardStatsController::class, 'courseStatusStats']);
     Route::get('/stats/top-courses', [DashboardStatsController::class, 'topCoursesByStudents']);
 
@@ -65,18 +80,20 @@ Route::middleware(['auth:sanctum', 'role:CREATOR'])->prefix('creator')->group(fu
 // Rotas com Autenticação necessária
 Route::middleware(['auth:sanctum'])->group(function () {
     // Rota LOGOUT
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/logout', [AuthController::class, 'logout']);
-    });
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('/courses', [PublicCourseController::class, 'index']);
+    Route::get('/courses/{id}', [PublicCourseController::class, 'show']);
 
     // Rotas ALUNO
     Route::middleware('role:STUDENT')->group(function () {
+        Route::get('courses/{course:public_id}/registration', [RegistrationCourseController::class, 'show']);
         // Inscrever-se num Curso
         Route::post('courses/{course:public_id}/registration', [RegistrationCourseController::class, 'store']);
 
         Route::prefix('student')->group(function () {
             Route::get('/registrations', [RegistrationCourseController::class, 'index']);
-            Route::post('/classes/{classe}/completed', [StudentClasseController::class, 'completed']);
+            Route::post('/classes/{classe_id}/completed', [StudentClasseController::class, 'completed']);
         });
     });
 });
