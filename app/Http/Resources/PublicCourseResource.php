@@ -2,12 +2,11 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Registration;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CourseResource extends JsonResource
+class PublicCourseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,13 +16,12 @@ class CourseResource extends JsonResource
     public function toArray(Request $request): array
     {
         $user = User::where('id', $this->creator_id)->first();
-        $registrations = Registration::where('course_id', $this->id)->get();
         return [
             'public_id' => $this->public_id,
-            'creator_id' => $user->public_id,
+            'creator_name' => $user->name,
             'title' => $this->title,
             'description' => $this->description,
-            'status' => $this->status->label(),  // chamando metodo 'label()' do enum para apresentação dos dados
+            'is_enrolled' => $this->is_enrolled,
             'modules' => $this->modules->map(function ($module) {
                 return [
                     'title' => $module->title,
@@ -37,13 +35,6 @@ class CourseResource extends JsonResource
                     })->values()
                 ];
             })->values(),
-            'students' => $registrations->map(function ($registration) {
-                return [
-                    'name' => $registration->user->name,
-                    'email' => $registration->user->email,
-                    'enrolled_at' =>  $registration->created_at->format('d/m/Y'),
-                ];
-            })->values()
         ];
     }
 }

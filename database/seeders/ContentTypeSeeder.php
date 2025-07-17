@@ -23,17 +23,9 @@ class ContentTypeSeeder extends Seeder
                 'created_at' => now(),
             ],
             [
-                'name' => 'Audio',
-                'created_at' => now(),
-            ],
-            [
                 'name' => 'File',
                 'created_at' => now(),
             ],
-            [
-                'name' => 'Quiz',
-                'created_at' => now(),
-            ]
         ]);
     }
 }

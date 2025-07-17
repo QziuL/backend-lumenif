@@ -27,11 +27,24 @@ class ClasseController extends Controller
     public function store(Request $request): JsonResponse
     {
         $this->validateRequest($request, "CREATE");
-        try {
-            return ClasseDto::createResponse($this->classeService->create(ClasseDto::createDto($request), auth()->id()));
-        }catch (Exception $e) {
+
+        try{
+            $result = $this->classeService->create($request);
+            return response()->json([
+                'message' => 'Sucesso ao criar Aula!',
+                'data' => $result
+            ], 201);
+        }catch (Exception $e){
             return response()->json(['Erro interno durante criação de Aula.' => $e->getMessage()], 500);
         }
+
+//        try {
+//            return ClasseDto::createResponse(
+//                $this->classeService->create(ClasseDto::createDto($request), auth()->id())
+//            );
+//        }catch (Exception $e) {
+//            return response()->json(['Erro interno durante criação de Aula.' => $e->getMessage()], 500);
+//        }
     }
 
     public function show(string $id): JsonResponse
@@ -76,6 +89,10 @@ class ClasseController extends Controller
                     'content_type_id' => 'required|exists:content_types,id',
                     'title' => 'required|string|max:255',
                     'order' => 'required|integer',
+                    'file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:10240',
+                    'url_content' => 'nullable|string',
+                    'text_content' => 'nullable|string',
+                    'original_file_name'  => 'nullable|string',
                 ]);
             }else{
                 $request->validate([

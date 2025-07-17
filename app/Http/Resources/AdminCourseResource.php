@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Module;
+use App\Models\Registration;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ClasseResource extends JsonResource
+class AdminCourseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,11 +16,12 @@ class ClasseResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $user = User::where('id', $this->creator_id)->first();
         return [
             'public_id' => $this->public_id,
-            'module_id' => $this->module->public_id,
+            'creator' => $user->name,
             'title' => $this->title,
-            'order' => $this->order
+            'status' => $this->status->label(),
         ];
     }
 }

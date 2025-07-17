@@ -13,7 +13,7 @@ class ContentType extends Model
     protected $table = 'content_types';
     protected $fillable = ['name'];
 
-    public function classes(): HasMany {
-        return $this->hasMany(Classe::class);
+    public function contents(): HasMany {
+        return $this->hasMany(ClasseContent::class, 'content_type_id');
     }
 }

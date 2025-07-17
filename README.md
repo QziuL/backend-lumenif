@@ -1,61 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LumenIF API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Sobre o Projeto
 
-## About Laravel
+LumenIF API é o backend para uma plataforma de cursos online, desenvolvido como um projeto acadêmico. A API é responsável por gerenciar usuários, cursos, matrículas, e fornecer os dados necessários para o frontend da aplicação.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Projeto desenvolvido para a matéria de Desenvolvimento Web II, do curso de TADS.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tecnologias Utilizadas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP 8.2**
+- **Laravel 12**
+- **Laravel Sanctum:** Para autenticação de API.
+- **Docker:** Para subir container do banco PostgreSQL.
 
-## Learning Laravel
+## Funcionalidades Principais
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+A API oferece um conjunto de funcionalidades para diferentes perfis de usuários:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Autenticação
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Registro de Usuário:** `POST /api/register`
+- **Login:** `POST /api/login`
+- **Logout:** `POST /api/logout` (Requer autenticação)
 
-## Laravel Sponsors
+### Perfil: Administrador
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Gerenciamento de Usuários:** CRUD completo de usuários.
+- **Aprovação de Cursos:** Permite aprovar ou rejeitar cursos criados pelos "Creators".
+- **Visualização de Roles:** Lista os perfis de usuário disponíveis.
 
-### Premium Partners
+### Perfil: Creator (Criador de Conteúdo)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **Gerenciamento de Cursos:** CRUD completo para cursos, módulos e aulas.
+- **Dashboard de Estatísticas:** Métricas sobre o desempenho dos cursos.
 
-## Contributing
+### Perfil: Student (Aluno)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Visualização de Cursos:** Lista e visualiza os cursos disponíveis.
+- **Inscrição em Cursos:** Permite que o aluno se inscreva em um curso.
+- **Acompanhamento de Progresso:** Marca aulas como concluídas.
 
-## Code of Conduct
+## Estrutura da API
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+A API está organizada da seguinte forma:
 
-## Security Vulnerabilities
+- **Controllers:** Responsáveis por receber as requisições HTTP e interagir com os Services.
+- **Services:** Contêm a lógica de negócio da aplicação.
+- **DTOs (Data Transfer Objects):** Utilizados para transferir dados entre as camadas da aplicação de forma estruturada.
+- **Resources:** Transformam os models em respostas JSON.
+- **Models:** Representam as tabelas do banco de dados.
+- **Middleware:** Utilizado para controle de acesso baseado em perfis (Roles).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Como Executar o Projeto
 
-## License
+1. **Clone o repositório:**
+   ```bash
+   git clone <url-do-repositorio>
+   ```
+2. **Instale as dependências:**
+   ```bash
+   composer install
+   ```
+3. **Configure o ambiente:**
+   - Copie o arquivo `.env.example` para `.env`.
+   - Gere a chave da aplicação: `php artisan key:generate`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+4. **Configure o arquivo Docker no diretorio `/docker`: `docker-compose.yml`**
+
+
+5. **Execute as migrações e seeders:**
+   ```bash
+   php artisan migrate --seed
+   ```
+6. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   php artisan serve
+   ```
+
+A API estará disponível em `http://localhost:8000`.
